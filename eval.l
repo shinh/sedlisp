@@ -18,11 +18,14 @@
 (defun eval-val-1 (v s) (if (eq v NOT-FOUND) (eval-gval s) v))
 (defun eval-val (s) (eval-val-1 (table-get val-table s) s))
 
-(defun eval-if (o s) (if (eq o if) (run-if s) (eval-defun o s)))
+(defun eval-if (o s) (if (eq o if) (run-if s) (eval-defmacro o s)))
+(defun eval-defmacro (o s) (if (eq o defmacro) (run-defmacro s) (eval-defun o s)))
 (defun eval-defun (o s) (if (eq o defun) (run-defun s) (eval-lambda o s)))
 (defun eval-lambda (o s) (if (eq o lambda) (run-lambda s) (eval-quote o s)))
 (defun eval-quote (o s) (if (eq o quote) (run-quote s) (eval-define o s)))
-(defun eval-define (o s) (if (eq o define) (run-define s) (eval-func (eval o) s)))
+(defun eval-define (o s) (if (eq o define) (run-define s) (eval-macro (eval o) s)))
+(defun is-macro (o) (if (atom o) nil (eq (car o) macro)))
+(defun eval-macro (o s) (if (is-macro o) (run-macro (cdr o) s) (eval-func o s)))
 (defun is-func (o) (if (atom o) nil (eq (car o) lambda)))
 (defun eval-func (o s) (if (is-func o) (run-func (cdr o) s) (eval-add o s)))
 (defun eval-add (o s) (if (eq o +) (run-add s) (eval-sub o s)))
@@ -40,6 +43,7 @@
 (defun undefined-func (o) (print (cons o (quote (undefined func)))))
 
 (defun run-if (s) (if (eval (car s)) (eval (cadr s)) (eval (car (cddr s)))))
+(defun run-defmacro (s) (gval-table-add (car s) (cons macro (cdr s))))
 (defun run-defun (s) (gval-table-add (car s) (run-lambda (cdr s))))
 (defun run-lambda (s) (cons lambda s))
 (defun run-quote (s) (car s))
@@ -50,8 +54,15 @@
 
 (defun run-func-2 (a b c) b)
 (defun run-func-1 (v l s) (run-func-2 (set-vals (car l) s) (eval (cadr l)) (define val-table v)))
-;(defun run-func-1 (v l s) (run-func-2 (set-vals (car l) s) (eval (cadr l)) (define val-table v)))
 (defun run-func (l s) (run-func-1 val-table l s))
+
+(defun create-val-table-m (a p) (if a (cons (car a) (cons (car p) (create-val-table-m (cdr a) (cdr p)))) ()))
+(defun set-vals-m (a p) (define val-table (create-val-table-m a p)))
+
+(defun run-macro-2 (a b c) b)
+(defun run-macro-1 (v l s) (run-macro-2 (set-vals-m (car l) s) (eval (cadr l)) (define val-table v)))
+
+(defun run-macro (l s) (eval (run-macro-1 val-table l s)))
 
 (defun run-add (s) (+ (eval (car s)) (eval (cadr s))))
 (defun run-sub (s) (- (eval (car s)) (eval (cadr s))))
@@ -122,3 +133,6 @@
 ;(eval (quote (defun func2 (b) (+ (func) b))))
 ;(eval (quote (defun func2 (b) (+ b (func 99)))))
 ;(eval (quote (func2 42)))
+
+(eval (quote (defmacro let (l e) (cons (cons lambda (cons (cons (car l) nil) (cons e nil))) (cons (car (cdr l)) nil)))))
+(eval (quote (let (x 42) x)))

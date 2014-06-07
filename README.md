@@ -118,6 +118,23 @@ Lisp. You can run the FizzBuzz program like:
 
 This takes very long time. For me, it took 45 minutes.
 
+Though sedlisp.sed does not support defmacro, eval.l also defines
+defmacro:
+
+    $ ./evalify.rb | sed -f sedlisp.sed
+    (defmacro let (l e) (cons (cons lambda (cons (cons (car l) nil) (cons e nil))) (cons (car (cdr l)) nil)))
+    (let (x 42) (+ x 7))  ; Hit ^d after this.
+    ...
+    49
+    $ ./evalify.rb | sed -f sedlisp.sed
+    (defun list0 (a) (cons a nil))
+    (defun cadr (a) (car (cdr a)))
+    (defmacro cond (l) (if l (cons if (cons (car (car l)) (cons (cadr (car l)) (cons (cons (quote cond) (list0 (cdr l))))))) nil))
+    (defun fb (n) (cond (((eq (mod n 5) 0) "Buzz") ((eq (mod n 3) 0) "Fizz") (t n))))
+    (fb 18)  ; Hit ^d after this. This will take about one minute.
+    ...
+    Fizz
+
 Unfortunately, you cannot nest the eval one more time. This is
 probably a limitation of eval.l.
 

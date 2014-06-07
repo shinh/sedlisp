@@ -118,8 +118,9 @@ def eval_sexpr(sexpr, vals)
   when 'print'
     raise "invalid print: #{stringify_sexpr(sexpr)}" if args.size != 1
     puts "PRINT: #{stringify_sexpr(args[0])}"
-    p vals
     args[0]
+  else
+    raise "undefined function: #{op}"
   end
 end
 

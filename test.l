@@ -44,7 +44,7 @@
 ;(- 34 7)
 
 ;(if 1 2 3)
-
+1
 (+ 1(+ 1 1))
 
 (+(- 9 2) 1)
@@ -145,3 +145,14 @@ foo
 (defun func (a b) b) ;cont
 (defun func2 (a b) (+ (func 2 3) b)) ;cont
 (func2 99 42)
+
+; TEST EVAL
+
+(defmacro let (l e) (cons (cons lambda (cons (cons (car l) nil) (cons e nil))) (cons (car (cdr l)) nil))) ;cont
+(let (x 42) (+ x 7))
+
+(defun list0 (a) (cons a nil)) ;cont
+(defun cadr (a) (car (cdr a))) ;cont
+(defmacro cond (l) (if l (cons if (cons (car (car l)) (cons (cadr (car l)) (cons (cons (quote cond) (list0 (cdr l))))))) nil)) ;cont
+(defun fb (n) (cond (((eq (mod n 5) 0) Buzz) ((eq (mod n 3) 0) Fizz) (t n)))) ;cont
+(fb 18)

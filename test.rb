@@ -6,6 +6,10 @@ $evalify = false
 if ARGV[0] == '-e'
   $evalify = true
   ARGV.shift
+elsif ARGV[0] == '-E'
+  $evalify = true
+  $eval_test_only = true
+  ARGV.shift
 end
 
 ref_lisp = ARGV[0] || 'purelisp.rb'
@@ -38,9 +42,16 @@ while line = lines[lineno += 1]
     if (/TEST LAMBDA/ =~ line &&
         (ref_lisp == 'rblisp.rb' || test_lisp == 'rblisp.rb'))
       break
+    elsif /TEST EVAL/ =~ line
+      $eval_test = true
+      if !$evalify
+        break
+      end
     end
     next
   end
+
+  next if !$eval_test && $eval_test_only
 
   while line =~ /;cont/
     line.sub!(/;cont/, '')
@@ -52,7 +63,7 @@ while line = lines[lineno += 1]
     line = evalify(line)
   end
 
-  expected = getResult(COMMANDS[ref_lisp], orig)
+  expected = getResult(COMMANDS[ref_lisp], $eval_test ? line : orig)
   expected = expected.lines[-1].chomp
   output = getResult(COMMANDS[test_lisp], line)
   actual = output.lines[-1].chomp
