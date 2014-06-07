@@ -1,0 +1,11 @@
+(defun concat (a b) (if a (cons (car a) (concat (cdr a) b)) b))
+(defun < (a b) (neg? (- a b)))
+(defun >= (a b) (if (< a b) nil t))
+(defun filter-less1 (p h l) (if (< h p) (cons h l) l))
+(defun filter-less (p l) (if l (filter-less1 p (car l) (filter-less p (cdr l))) nil))
+(defun filter-more1 (p h l) (if (>= h p) (cons h l) l))
+(defun filter-more (p l) (if l (filter-more1 p (car l) (filter-more p (cdr l))) nil))
+(defun sort-1 (p l) (concat (sort (filter-less p l)) (cons p (sort (filter-more p l)))))
+(defun sort (l) (if l (sort-1 (car l) (cdr l)) nil))
+
+(sort (quote (6 4 3 5 1 2 7)))
