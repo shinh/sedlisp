@@ -1,7 +1,7 @@
 SedLisp
 =======
 
-Lisp implementation in sed
+Lisp implementation in (GNU) sed
 
 
 How to Use
@@ -133,3 +133,6 @@ Limitations
 
 There should be a lot of limitations. sedlisp behaves very strangely
 when you pass a broken Lisp code.
+
+I don't know how many GNU extensions I used, so it would not be easy
+to port this to other sed implementations.
