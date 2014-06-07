@@ -283,8 +283,6 @@ s/\n.*//
   s/((lambda@(@*)@\(.*\));\s*)$/\1/
 
   y/@/ /
-  # g is necessary as we are recovering all lambdas
-  #s/\$//g
 
   x
   s/\n[^\n]*$//
