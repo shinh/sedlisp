@@ -1,6 +1,7 @@
 (defun cadr (s) (car (cdr s)))
 (defun cddr (s) (cdr (cdr s)))
 
+;(defun table-add (m k v) (if m (if (eq (car m) k) (cons k (cons v (cddr m))) (cons (car m) (cons (cadr m) (table-add (cddr m) k v)))) (cons k (cons v nil))))
 (defun table-add (m k v) (cons k (cons v m)))
 
 (define gval-table ())
@@ -132,5 +133,5 @@
 ;(eval (quote (defun func2 (b) (+ b (func 99)))))
 ;(eval (quote (func2 42)))
 
-(eval (quote (defmacro let (l e) (cons (cons lambda (cons (cons (car l) nil) (cons e nil))) (cons (car (cdr l)) nil)))))
-(eval (quote (let (x 42) x)))
+;(eval (quote (defmacro let (l e) (cons (cons lambda (cons (cons (car l) nil) (cons e nil))) (cons (car (cdr l)) nil)))))
+;(eval (quote (let (x 42) x)))
