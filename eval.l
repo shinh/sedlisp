@@ -2,8 +2,6 @@
 (defun cddr (s) (cdr (cdr s)))
 
 (defun table-add (m k v) (cons k (cons v m)))
-(defun table-get (m k) (if m (table-get-impl m k) NOT-FOUND))
-(defun table-get-impl (m k) (if (eq (car m) k) (cadr m) (table-get (cddr m) k)))
 
 (define gval-table ())
 (defun gval-table-add (k v) (define gval-table (table-add gval-table k v)))
@@ -12,11 +10,11 @@
 
 (defun eval (s) (if (atom s) (eval-val s) (eval-if (car s) (cdr s))))
 
-(defun eval-gval-1 (v s) (if (eq v NOT-FOUND) s v))
-(defun eval-gval (s) (eval-gval-1 (table-get gval-table s) s))
+(defun eval-gval-1 (v s) (if v (if (eq (car v) s) (cadr v) (eval-gval-1 (cddr v) s)) s))
+(defun eval-gval (s) (eval-gval-1 gval-table s))
 
-(defun eval-val-1 (v s) (if (eq v NOT-FOUND) (eval-gval s) v))
-(defun eval-val (s) (eval-val-1 (table-get val-table s) s))
+(defun eval-val-1 (v s) (if v (if (eq (car v) s) (cadr v) (eval-val-1 (cddr v) s)) (eval-gval s)))
+(defun eval-val (s) (eval-val-1 val-table s))
 
 (defun eval-if (o s) (if (eq o if) (run-if s) (eval-defmacro o s)))
 (defun eval-defmacro (o s) (if (eq o defmacro) (run-defmacro s) (eval-defun o s)))
