@@ -135,8 +135,20 @@ defmacro:
     ...
     Fizz
 
-Unfortunately, you cannot nest the eval one more time. This is
-probably a limitation of eval.l.
+You can apply ./evalify.rb multiple times. However, sedlisp seems to
+be too slow to run the generated program. purelisp.rb, which is a
+reference implementation of sedlisp, can run it:
+
+    $ ./evalify.rb fizzbuzz.l | ./evalify.rb | ruby purelisp.rb
+    ...
+    PRINT: 1
+    PRINT: 2
+    PRINT: Fizz
+    PRINT: 4
+    PRINT: Buzz
+    PRINT: Fizz
+    PRINT: 7
+    PRINT: 8
 
 test.l is the test program I was using during the development. test.rb
 runs it with sedlisp.sed and purelisp.rb and compare their
