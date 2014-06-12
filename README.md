@@ -57,16 +57,6 @@ Special Forms
 - define
 
 
-Special Forms
--------------
-
-- quote
-- if
-- lambda
-- defun
-- define
-
-
 More Complicated Examples
 -------------------------
 
