@@ -13,12 +13,18 @@ elsif ARGV[0] == '-E'
 end
 
 ref_lisp = ARGV[0] || 'purelisp.rb'
-test_lisp = ARGV[1] || 'sedlisp.sed'
+test_lisp = ARGV[1]
+test_lisp ||= File.exist?('sedlisp.sed') ? 'sedlisp.sed' : 'beflisp.bef'
 
 COMMANDS = {
   'purelisp.rb' => ['ruby', 'purelisp.rb'],
   'rblisp.rb' => ['ruby', 'rblisp.rb'],
   'sedlisp.sed' => ['sed', '-f', 'sedlisp.sed'],
+  'lisp.bef' => ['./befunge', 'lisp.bef'],
+  'beflisp.bef' => ['./befunge', 'beflisp.bef'],
+  'lisp' => ['./lisp'],
+  'makelisp.mk' => ['make', '-f', 'makelisp.mk'],
+  'makelisp2.mk' => ['make', '-f', 'makelisp2.mk'],
 }
 
 def getResult(cmd, line)
@@ -64,9 +70,9 @@ while line = lines[lineno += 1]
   end
 
   expected = getResult(COMMANDS[ref_lisp], $eval_test ? line : orig)
-  expected = expected.lines[-1].chomp
+  expected = expected.lines.to_a[-1].to_s.chomp
   output = getResult(COMMANDS[test_lisp], line)
-  actual = output.lines[-1].chomp
+  actual = output.lines.to_a[-1].to_s.chomp
 
   if expected == actual
     puts "#{orig}: OK (#{expected})"
